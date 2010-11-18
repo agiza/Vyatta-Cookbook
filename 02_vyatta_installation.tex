@@ -1,0 +1,109 @@
+\chapter{Vyatta Installation}
+There are basically three ways of getting Vyatta installed:
+\begin{enumerate}
+ \item Installation on physical hardware
+ \item Installation on a virtual machine
+ \item Ordering hardware with preinstalled Vyatta
+\end{enumerate}
+
+Vyatta inc. offers some hardware appliances with different form factor and performance and Vyatta Subscription
+preinstalled. However, choosing your own hardware for specific purpose or reusing existing hardware may be a better
+option. 
+
+Possibility to install on a virtual machine is actually the ``killing feature'' -- for now Vyatta is the only
+routing and security software suitable for virtual environments. Citrix XenServer\texttrademark\ and 
+VMWare\texttrademark\ hypervisors are officially supported (and images for them are provided), KVM and 
+VirtualBox\texttrademark\ are reported to work by community members.
+
+Vyatta is shipped in several forms:
+\begin{enumerate}
+ \item Generic installation LiveCD
+ \item Installation CD for virtual machine
+ \item XenServer template
+ \item VMWare template
+\end{enumerate}
+
+Also there are two installation options: file based and image based. File based installation is similar to how 
+general purpose systems are installed. In image based setup all system files are kept in a 
+SquashFS\footnote{A read only compressing file system, widely used for LiveCD and similar images.} compressed image
+which is united with read/write file system at boot time.
+
+Image based installation is the recommended way. It allows to keep several images on a single machine and thereby 
+perform safe upgrade with possibility to rollback to previous version if something went wrong by mere reboot. An image
+can be installed on a file based setup too.
+
+\section{Install from .iso image}
+Installation procedure is common for generic and virtualization ISO images. First you need to boot your hardware or
+virtual machine from it. Both of them work as LiveCD, so you can try it out without installation (configuration file
+can be saved on a floppy drive in that case). To install you will need access to serial or keyboard/video console.
+
+After you booted your machine, you will see the login prompt:
+\begin{verbatim}
+Welcome to Vyatta - vyatta tty1
+vyatta login: 
+\end{verbatim}
+
+Log in with user name ``vyatta'' and password ``vyatta''. You will see the command prompt:
+\begin{verbatim}
+vyatta@vyatta:~$
+\end{verbatim}
+
+To perform image based installation, type command \texttt{install-image} and press Enter key. The installer will ask
+you several simple questions. Here is a sample installation dialog:
+\begin{verbatim}
+vyatta@vyatta:~$ install-image 
+Welcome to the Vyatta install program.  This script
+will walk you through the process of installing the
+Vyatta image to a local hard drive.
+Would you like to continue? (Yes/No) [Yes]: 
+Probing drives: OK
+Looking for pre-existing RAID groups...none found.
+The Vyatta image will require a minimum 1000MB root.
+Would you like me to try to partition a drive automatically
+or would you rather partition it manually with parted?  If
+you have already setup your partitions, you may skip this step
+
+Partition (Auto/Parted/Skip) [Auto]: 
+
+I found the following drives on your system:
+ vda	2147MB
+
+
+Install the image on? [vda]:
+
+This will destroy all data on /dev/vda.
+Continue? (Yes/No) [No]: Yes
+This will destroy all data on /dev/vda.
+Continue? (Yes/No) [No]: Yes
+
+How big of a root partition should I create? (1000MB - 2147MB) [2147]MB: 
+
+Creating filesystem on /dev/vda1: OK
+Done!
+Mounting /dev/vda1...
+What would you like to name this image? [999.mendocino.11181940]: 
+OK.  This image will be named: 999.mendocino.11181940
+Copying squashfs image...
+Copying kernel and initrd images...
+Done!
+I found the following configuration files
+/opt/vyatta/etc/config/config.boot
+Which one should I copy to vda? [/opt/vyatta/etc/config/config.boot]: 
+
+Enter password for administrator account
+Enter vyatta password:
+Retype vyatta password:
+I need to install the GRUB boot loader.
+I found the following drives on your system:
+ vda	2147MB
+
+
+Which drive should GRUB modify the boot partition on? [vda]:
+
+Setting up grub: OK
+Done!
+vyatta@vyatta:~$ 
+
+\end{verbatim}
+
+

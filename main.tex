@@ -1,0 +1,40 @@
+\documentclass[a4paper,10pt, draft]{report}
+
+% Packages
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+
+% Options
+\textwidth=16cm
+\textheight=25cm
+\oddsidemargin=-0.1cm
+\evensidemargin=0.11cm
+\headheight=0cm
+\topmargin=-1cm
+\parindent=1cm
+\emergencystretch=5pt
+
+% Title Page
+\title{Vyatta Cookbook}
+\author{Daniil Baturin}
+
+
+\begin{document}
+
+\newcommand{\console}[1]{ \texttt{#1} }
+
+\maketitle
+
+%\begin{abstract}
+%\end{abstract}
+
+\input 00_preface.tex
+\input 01_what_is_vyatta.tex
+
+% Since now we want to print section names as "Recipe X.X" 
+\renewcommand{\thesection}{Recipe \arabic{chapter}.\arabic{section}}
+
+\input 02_vyatta_installation.tex
+
+\end{document}
