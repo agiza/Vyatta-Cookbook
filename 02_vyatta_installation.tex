@@ -49,13 +49,14 @@ vyatta@vyatta:~$
 \end{verbatim}
 
 To perform image based installation, type command \texttt{install-image} and press Enter key. The installer will ask
-you several simple questions. Here is a sample installation dialog:
+you several simple questions. Note that you need at least 2~GB big partition to install.
+Here is a sample installation dialog (in triangle brackets user actions are shown):
 \begin{verbatim}
 vyatta@vyatta:~$ install-image 
 Welcome to the Vyatta install program.  This script
 will walk you through the process of installing the
 Vyatta image to a local hard drive.
-Would you like to continue? (Yes/No) [Yes]: 
+Would you like to continue? (Yes/No) [Yes]: <Enter pressed>
 Probing drives: OK
 Looking for pre-existing RAID groups...none found.
 The Vyatta image will require a minimum 1000MB root.
@@ -63,16 +64,14 @@ Would you like me to try to partition a drive automatically
 or would you rather partition it manually with parted?  If
 you have already setup your partitions, you may skip this step
 
-Partition (Auto/Parted/Skip) [Auto]: 
+Partition (Auto/Parted/Skip) [Auto]: <Enter pressed>
 
 I found the following drives on your system:
  vda	2147MB
 
 
-Install the image on? [vda]:
+Install the image on? [vda]: <Enter pressed>
 
-This will destroy all data on /dev/vda.
-Continue? (Yes/No) [No]: Yes
 This will destroy all data on /dev/vda.
 Continue? (Yes/No) [No]: Yes
 
@@ -81,8 +80,8 @@ How big of a root partition should I create? (1000MB - 2147MB) [2147]MB:
 Creating filesystem on /dev/vda1: OK
 Done!
 Mounting /dev/vda1...
-What would you like to name this image? [999.mendocino.11181940]: 
-OK.  This image will be named: 999.mendocino.11181940
+What would you like to name this image? [VC6.1-2010.08.20]: 
+OK.  This image will be named: VC6.1-2010.08.20
 Copying squashfs image...
 Copying kernel and initrd images...
 Done!
@@ -91,19 +90,85 @@ I found the following configuration files
 Which one should I copy to vda? [/opt/vyatta/etc/config/config.boot]: 
 
 Enter password for administrator account
-Enter vyatta password:
-Retype vyatta password:
+Enter vyatta password: <password typed, typed keys not visible>
+Retype vyatta password: <password retyped, typed keys not visible>
 I need to install the GRUB boot loader.
 I found the following drives on your system:
  vda	2147MB
 
 
-Which drive should GRUB modify the boot partition on? [vda]:
+Which drive should GRUB modify the boot partition on? [vda]: <Enter pressed>
 
 Setting up grub: OK
 Done!
-vyatta@vyatta:~$ 
+\end{verbatim}
+After installation finished, reboot your router.
+\pagebreak
 
+\section{Upgrade an existing system}
+With image based installation you may have as many images as you want (and your disk space allows). To add a new
+image, enter command ``\texttt{add system image <URL>}''. An example of image installation dialog:
+\begin{verbatim}
+vyatta@vyatta:~$ add system image ftp://10.9.7.5/vyatta-livecd_VC6.1-2010.10.16_i386.iso
+Welcome to the Vyatta install program.  This script
+will walk you through the process of installing the
+Vyatta image to a local hard drive.
+Would you like to continue? (Yes/No) [Yes]: 
+Trying to fetch ISO file from ftp://10.9.7.5/vyatta-livecd_VC6.1-2010.10.16_i386.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  160M  100  160M    0     0  26.9M      0  0:00:05  0:00:05 --:--:-- 22.1M
+ISO download suceeded.
+Checking for digital signature file...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (19) RETR response: 550
+Unable to fetch digital signature file.
+Do you want to continue without signature check? (yes/no) [yes] 
+Checking MD5 checksums of files on the ISO image...OK.
+You are running an installed system. Do you want to use the current install
+partition? (Yes/No) [Yes]: 
+
+Done!
+What would you like to name this image? [VC6.1-2010.10.16]: 
+OK.  This image will be named: VC6.1-2010.10.16
+Installing "VC6.1-2010.10.16" image.
+Copying new release files...
+Would you like to save the current configuration 
+directory and use the current start-up configuration 
+for the new version? (Yes/No) [Yes]: 
+Copying current configuration...
+Would you like to save the SSH host keys from your 
+current configuration? (Yes/No) [Yes]: 
+Copying SSH keys...
+Setting up grub configuration...
+Done.
+\end{verbatim}
+New image is set to default boot automatically. After installation finished, you may see the list of images
+by using command ``\texttt{show system image}'':
+\begin{verbatim}
+vyatta@vyatta:~$ show system image 
+The system currently has the following image(s) installed:
+
+   1: VC6.1-2010.10.16 (default boot)
+   2: VC6.1-2010.08.20
+\end{verbatim}
+Reboot your router to make it use newly installed image.
+
+
+\section{Delete an unused image}
+If you want to delete an image (for example a previous version you do not want to use after upgrade anymore),
+enter command ``\texttt{delete system image <name>}''. Use name as it shown in ``\texttt{show system image}''.
+output. Note that you can not delete currently running image. \ 
+Here is an example of image deletion dialog:
+\begin{verbatim}
+vyatta@vyatta:~$ delete system image VC6.1-2010.08.20 
+Are you sure you want to delete the
+"VC6.1-2010.08.20" image? (Yes/No) [No]: Yes
+Deleting the "VC6.1-2010.08.20" image...
+Done
 \end{verbatim}
 
-
+\section{Change boot image}
+To change default boot image, use command ``\texttt{set system image default-boot <name>}''.
