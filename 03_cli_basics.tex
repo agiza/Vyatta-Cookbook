@@ -3,49 +3,148 @@ Command Line Interface (CLI) is the preferred way to manage Vyatta. Its concepts
 JunOS CLI, but commands are not the same.
 
 Vyatta configuration is hierarchical, therefore commands to manage it are multiword, starting with operation name 
-(e.g. set or delete) and ending with configuration path, like ``\texttt{set interfaces ethernet eth0 disable}''.
+(e.g. set or delete) and ending with configuration path, like ``\command{set interfaces ethernet eth0 disable}''.
 
 \begin{figure}[hc]
  \begin{center}
-   \includegraphics[width=0.5\textwidth]{images/config_tree.eps}
+   \includegraphics[width=\textwidth]{images/config_tree}
    \caption{Subset of Vyatta configuration tree}
   \end{center}
 \end{figure}
 
 
-There are two CLI modes: operational mode and configuration mode. Operational mode is what you enter right after
+There are two CLI modes: \term{operational mode} and \term{configuration mode}. Operational mode is what you enter right after
 you logged in. It is intended for system maintenance operations, like upgrade, reboot or shutdown. You also may view
 many parameters and services status from it, like DHCP leases or active VPN sessions. But you can not change system
 configuration from this mode, it can be done from configuration mode only.
 
-\section{Use operational mode}
-Operational mode can be recognized by its specific command promt ending with ``\texttt{\$}''.
-Like ``\texttt{vyatta@vyatta\$}''. Operational mode has various command, and they are discussed in further chapters.
+\section{Vyatta Configuration Flow}
+There are three stages in Vyatta configuration life cycly.
+\begin{enumerate}
+ \item Working (active) configuration --- this is configuration made by user from running configuration.
+ \item Running configuration -- this is configuration actually used by Vyatta.
+ \item Saved configuration -- a running configuration saved to a file.
+\end{enumerate}
+The following figure illustrates it:
+\begin{figure}[hc]
+ \begin{center}
+   \includegraphics[width=\textwidth]{images/configuration_flow}
+   \caption{Vyatta configuration flow}
+  \end{center}
+\end{figure}
 
-\section{Enter  and exit configuration mode}
-To enter configuration mode, you should issue ``\texttt{configure}'' command. Configuration mode command prompt is
-different and ends with ``\texttt{\#}''. Like ``\texttt{vyatta@vyatta\#}''. To get back from configuration mode to
-operational, use ``\texttt{exit}'' command.
+When you are entering configuration mode (see below), running configuration is copied to your working
+configuration. After you activated your changes, they are applied to running configuration. And if your
+saving configuration to file, running configuration is saved.
+
+\section{Use Operational Mode}
+Operational mode can be recognized by its specific command promt ending with ``\console{\$}''.
+Like ``\console{vyatta@vyatta\$}''. Operational mode has various command, and they are discussed in further
+chapters.
+
+\section{Enter and Exit Configuration Mode}
+\problem{You want to make changes in configuration.}
+\solution
+Before making changes to configuration, you should enter configuration mode. To enter configuration mode, 
+you should issue ``\command{configure}'' command. Configuration mode command prompt is
+different and ends with ``\console{\#}''. Like ``\console{vyatta@vyatta\#}''. To get back from configuration
+mode to operational, use ``\command{exit}'' command.
+\begin{verbatim}
+vyatta@vyatta:~$ configure 
+[edit]
+vyatta@vyatta# exit
+exit
+vyatta@vyatta:~$ 
+\end{verbatim}
 
 Command set is different in operational and configuration mode, and operational commands can not be executed
 ``as is'' from configuration mode (and vice versa). However, there is a way not to switch between modes just to
 execute an operational command.
 
 \section{Execute an operational command from configuration mode}
-Use ``\texttt{run}'' command for it. Example:
+\problem{You are in configuration mode, but want to run an operational command.}
+\solution
+Use ``\command{run}'' command for it. Example:
 \begin{verbatim}
 vyatta@vyatta# run show system uptime 
  10:34:43 up 2 days,  8:38,  2 users,  load average: 0.00, 0.00, 0.00
 \end{verbatim}
 
+\section{View configuration}
+\problem{You want to view your configuration or its part.}
+\solution
+To view the configuration, use ``\command{show}'' command. It accepts configuration path as its argument, 
+e.g.~``\command{show interfaces ethernet eth0}''. Example:
+\begin{verbatim}
+vyatta@vyatta# show interfaces ethernet eth0
+   address dhcp
+\end{verbatim}
+
+\discussion
+If your configuration was changed, and changes have not been commited yet, you will see some additional signs
+before modifiyed strings. They are:
+\begin{itemize}
+ \item ``\console{+}'' --- means a string will be added to configuration
+ \item ``\console{-}'' --- means a string will be deleted from configuration
+ \item ``\console{>}'' --- means a string will be replaced in configuration
+\end{itemize}
+Example:
+\begin{verbatim}
+vyatta@vyatta# show firewall 
+   name Local {
+       rule 10 {
+           action accept
+  -        source {
+  -            address 192.0.2.0/24
+  -        }
+       }
+   }
+\end{verbatim}
+From the example above we can see that strings about source are to be deleted.
+
+\section{Apply configuration changes}
+\problem{You have made configuration changes and want to activate them.}
+\solution
+Configuration changes are not applied right after you issue commands. To apply them, you should issue 
+``\command{commit}'' command. This allows you to check carefully whether all changes you made are correct, and
+safely make bulk changes that would require respect to command order if changes were applied immediately
+(for instance, when creating a new BGP neighbor you can be sure route-map is applied before session is initiated).
+
+If you changed your mind about configuration changes you have made, you can discard them with command 
+``\command{discard}''.
+
+\section{Save configuration}
+\problem{You want to save your configuration for permanent use.}
+\solution
+To save your configuration, issue command ``\command{save}''. If no argument given, this command saves configuration
+to the default file which is read at boot time. If you want to save it to some other file, give its path as
+command argument, like ``\command{save config-experimental}''.
+
+``\command{save}'' command also supports saving to TFTP, FTP or SCP~(SSH) server. Example: 
+``\command{save scp://user:password@example.net/archive/config-2010.11.22.conf}''
+
+\discussion
+Configuration changes are kept only in running configuration until you saved them to file. Default configuration
+file which is read at boot time is \console{/opt/vyatta/etc/config/config.boot}. It is created by 
+``\command{save}'' command when it is ran with no adrgument.
+
+If you give only a file name to that command, file will be saved also to \console{/opt/vyatta/etc/config} 
+directory.
+
+\section{Load configuration from file}
+\problem{You want to load configuration from an existing file.}
+\solution
+Use command ``\command{load <file>}'' to load a configuration file.
 
 \section{Execute UNIX commands}
+\problem{For some reason you want to execute a UNIX command from Vyatta CLI.}
+\solution
 Note that Vyatta provides full UNIX environment, and you can execute ordinary UNIX commands from CLI by just typing
 them. The only thing is: there is no completion for them, completion works for Vyatta commands only. 
-\texttt{\$PATH} variable also does not contain directoried like \texttt{/sbin} by default.
+\console{\$PATH} variable also does not contain directoried like \console{/sbin} by default.
 
 However, when working as an administrative user, you may use a simple workaround by executing command with
-``\texttt{sudo}''. Example:
+``\command{sudo}''. Example:
 \begin{verbatim}
 vyatta@vyatta:~$ sudo ls -al ~
 total 28

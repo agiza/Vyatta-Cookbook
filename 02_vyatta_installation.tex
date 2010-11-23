@@ -33,6 +33,8 @@ perform safe upgrade with possibility to rollback to previous version if somethi
 can be installed on a file based setup too.
 
 \section{Install from .iso image}
+\problem{You want to install Vyatta from a LiveCD image.}
+\solution
 Installation procedure is common for generic and virtualization ISO images. First you need to boot your hardware or
 virtual machine from it. Both of them work as LiveCD, so you can try it out without installation (configuration file
 can be saved on a floppy drive in that case). To install you will need access to serial or keyboard/video console.
@@ -48,7 +50,7 @@ Log in with user name ``vyatta'' and password ``vyatta''. You will see the comma
 vyatta@vyatta:~$
 \end{verbatim}
 
-To perform image based installation, type command \texttt{install-image} and press Enter key. The installer will ask
+To perform image based installation, type command \command{install-image} and press Enter key. The installer will ask
 you several simple questions. Note that you need at least 2~GB big partition to install.
 Here is a sample installation dialog (in triangle brackets user actions are shown):
 \begin{verbatim}
@@ -103,11 +105,13 @@ Setting up grub: OK
 Done!
 \end{verbatim}
 After installation finished, reboot your router.
-\pagebreak
+%\pagebreak
 
 \section{Upgrade an existing system}
+\problem{You want to upgrade an existing system to newer software version.}
+\solution
 With image based installation you may have as many images as you want (and your disk space allows). To add a new
-image, enter command ``\texttt{add system image <URL>}''. An example of image installation dialog:
+image, enter command ``\command{add system image <URL>}''. An example of image installation dialog:
 \begin{verbatim}
 vyatta@vyatta:~$ add system image ftp://10.9.7.5/vyatta-livecd_VC6.1-2010.10.16_i386.iso
 Welcome to the Vyatta install program.  This script
@@ -146,7 +150,7 @@ Setting up grub configuration...
 Done.
 \end{verbatim}
 New image is set to default boot automatically. After installation finished, you may see the list of images
-by using command ``\texttt{show system image}'':
+by using command ``\command{show system image}'':
 \begin{verbatim}
 vyatta@vyatta:~$ show system image 
 The system currently has the following image(s) installed:
@@ -158,8 +162,10 @@ Reboot your router to make it use newly installed image.
 
 
 \section{Delete an unused image}
-If you want to delete an image (for example a previous version you do not want to use after upgrade anymore),
-enter command ``\texttt{delete system image <name>}''. Use name as it shown in ``\texttt{show system image}''.
+\problem{You want to delete a system image (for example, a previous version you do not want 
+to use after upgrade anymore).}
+\solution 
+Enter command ``\command{delete system image <name>}''. Use name as it shown in ``\command{show system image}''.
 output. Note that you can not delete currently running image. \ 
 Here is an example of image deletion dialog:
 \begin{verbatim}
@@ -171,4 +177,6 @@ Done
 \end{verbatim}
 
 \section{Change boot image}
-To change default boot image, use command ``\texttt{set system image default-boot <name>}''.
+\problem{You want to change default boot image (e.g. to compare newer and older versions).}
+\solution
+To change default boot image, use command ``\command{set system image default-boot <name>}''.
