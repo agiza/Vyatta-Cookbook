@@ -37,12 +37,7 @@ When you are entering configuration mode (see below), running configuration is c
 configuration. After you activated your changes, they are applied to running configuration. And if your
 saving configuration to file, running configuration is saved.
 
-\section{Use Operational Mode}
-Operational mode can be recognized by its specific command promt ending with ``\console{\$}''.
-Like ``\console{vyatta@vyatta\$}''. Operational mode has various command, and they are discussed in further
-chapters.
-
-\section{Enter and Exit Configuration Mode}
+\section{Recipe: Enter and Exit Configuration Mode}
 \problem{You want to make changes in configuration.}
 \solution
 Before making changes to configuration, you should enter configuration mode. To enter configuration mode, 
@@ -61,7 +56,7 @@ Command set is different in operational and configuration mode, and operational 
 ``as is'' from configuration mode (and vice versa). However, there is a way not to switch between modes just to
 execute an operational command.
 
-\section{Execute an operational command from configuration mode}
+\section{Recipe: Execute an operational command from configuration mode}
 \problem{You are in configuration mode, but want to run an operational command.}
 \solution
 Use ``\command{run}'' command for it. Example:
@@ -70,7 +65,32 @@ vyatta@vyatta# run show system uptime
  10:34:43 up 2 days,  8:38,  2 users,  load average: 0.00, 0.00, 0.00
 \end{verbatim}
 
-\section{View configuration}
+\section{Recipe: Edit Configuration at Some Level}
+\problem{You do not want to enter full configuration path in commands.}
+\solution
+Vyatta allows you to switch between configuration levels to make your commands shorter. Compare the following
+configuration sessions:
+\begin{verbatim}
+vyatta@vyatta# set service nat rule 10 type destination 
+[edit]
+vyatta@vyatta# set service nat rule 10 inbound-interface eth0
+[edit]
+\end{verbatim}
+and:
+\begin{verbatim}
+vyatta@vyatta# edit service nat 
+[edit service nat]
+vyatta@vyatta# set rule 10 type destination 
+[edit service nat]
+vyatta@vyatta# set rule 10 inbound-interface eth0
+[edit service nat]
+\end{verbatim}
+By default when you enter configuration mode, you are at the top level. By using ``\command{edit <path>}'' command,
+like mentioned above ``\command{edit service nat}'' you may change the level and type commands with that level
+substituted (like ``\command{set rule 10 type destination}'' instead of 
+``\command{set service nat rule 10 type destination}'').
+
+\section{Recipe: View configuration}
 \problem{You want to view your configuration or its part.}
 \solution
 To view the configuration, use ``\command{show}'' command. It accepts configuration path as its argument, 
@@ -102,18 +122,42 @@ vyatta@vyatta# show firewall
 \end{verbatim}
 From the example above we can see that strings about source are to be deleted.
 
-\section{Apply configuration changes}
+\section{Recipe: Apply Configuration Changes}
 \problem{You have made configuration changes and want to activate them.}
 \solution
 Configuration changes are not applied right after you issue commands. To apply them, you should issue 
 ``\command{commit}'' command. This allows you to check carefully whether all changes you made are correct, and
 safely make bulk changes that would require respect to command order if changes were applied immediately
 (for instance, when creating a new BGP neighbor you can be sure route-map is applied before session is initiated).
+\begin{verbatim}
+vyatta@vyatta# set system host-name router
+[edit]
+vyatta@vyatta# commit
+[edit]
+vyatta@vyatta# show system host-name 
+   host-name router
+[edit]
+\end{verbatim}
+
 
 If you changed your mind about configuration changes you have made, you can discard them with command 
 ``\command{discard}''.
 
-\section{Save configuration}
+\discussion
+Note that even if all of your commands to change configuration worked propely, your commit may fail. Like this:
+\begin{verbatim}
+vyatta@vyatta# set service nat rule 10 type destination 
+[edit]
+vyatta@vyatta# commit
+NAT configuration error: inbound-interface not specified
+Commit failed
+\end{verbatim}
+It happens because when you are issuing commands, only separate commands syntax check is done (e.g. checking 
+whether an address is a correct IP address). When commiting changes, semantics are also checked, and if your
+changes do not pass it (like in example above, a destination NAT rule must have an inbound interface), you must
+fix them to make them commit successfully.
+
+\section{Recipe: Save Configuration}
 \problem{You want to save your configuration for permanent use.}
 \solution
 To save your configuration, issue command ``\command{save}''. If no argument given, this command saves configuration
@@ -131,12 +175,12 @@ file which is read at boot time is \console{/opt/vyatta/etc/config/config.boot}.
 If you give only a file name to that command, file will be saved also to \console{/opt/vyatta/etc/config} 
 directory.
 
-\section{Load configuration from file}
+\section{Recipe: Load Configuration from file}
 \problem{You want to load configuration from an existing file.}
 \solution
 Use command ``\command{load <file>}'' to load a configuration file.
 
-\section{Execute UNIX commands}
+\section{Recipe: Execute UNIX Commands}
 \problem{For some reason you want to execute a UNIX command from Vyatta CLI.}
 \solution
 Note that Vyatta provides full UNIX environment, and you can execute ordinary UNIX commands from CLI by just typing

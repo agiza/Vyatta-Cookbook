@@ -1,40 +1,64 @@
-\documentclass[a4paper,10pt, draft]{report}
+\documentclass[a4paper,twoside, 10pt]{report}
 
 % Packages
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage[T2A]{fontenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} % Use Latin Modern fonts
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{hyperref} % Enable hyperlinks
+
+%\hypersetup{linktocpage}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black,
+    pdftitle={Vyatta Cookbook},
+    pdfauthor={Daniil Baturin},
+    linktocpage
+}
 
 % Options
-\textwidth=16cm
-\textheight=25cm
-\oddsidemargin=-0.1cm
-\evensidemargin=0.11cm
-\headheight=0cm
-\topmargin=-1cm
-\parindent=1cm
+%\textwidth=16cm
+%\textheight=25cm
+%\oddsidemargin=-0.1cm
+%\evensidemargin=0.11cm
+%\headheight=0cm
+%\topmargin=-1cm
+%\parindent=1cm
 \emergencystretch=5pt
 
 % Title Page
 \title{Vyatta Cookbook}
 \author{Daniil Baturin}
 
-
 \begin{document}
 
-\newcommand{\console}[1]{ \texttt{#1} }
+\newcommand{\console}[1]{\texttt{#1}}
+\newcommand{\command}[1]{{\texttt{\textbf{#1}}}}
+\newcommand{\problem}[1]{\par\noindent{\large\textbf{Problem}} \\ #1 \\}
+\newcommand{\solution}{\par\noindent{\large\textbf{Solution}} \\}
+\newcommand{\discussion}{\par\noindent{\large\textbf{Discussion}} \\}
+\newcommand{\term}[1]{\textit{#1}}
 
 \maketitle
 
-%\begin{abstract}
-%\end{abstract}
+%\renewcommand{\l@section}{\@dottetocline{1}{1.5em}{20em}}
+
+\tableofcontents
+\addcontentsline{toc}{chapter}{Contents}
 
 \input 00_preface.tex
 \input 01_what_is_vyatta.tex
 
 % Since now we want to print section names as "Recipe X.X" 
-\renewcommand{\thesection}{Recipe \arabic{chapter}.\arabic{section}}
+%\renewcommand{\thesection}{Recipe \arabic{chapter}.\arabic{section}}
 
 \input 02_vyatta_installation.tex
+\input 03_cli_basics.tex
 
 \end{document}
