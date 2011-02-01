@@ -32,7 +32,7 @@ Image based installation is the recommended way. It allows to keep several image
 perform safe upgrade with possibility to rollback to previous version if something went wrong by mere reboot. An image
 can be installed on a file based setup too.
 
-\section{Install from .iso image}
+\section{Recipe: Install from .iso image}
 \problem{You want to install Vyatta from a LiveCD image.}
 \solution
 Installation procedure is common for generic and virtualization ISO images. First you need to boot your hardware or
@@ -107,7 +107,7 @@ Done!
 After installation finished, reboot your router.
 %\pagebreak
 
-\section{Upgrade an existing system}
+\section{Recipe: Upgrade an existing system}
 \problem{You want to upgrade an existing system to newer software version.}
 \solution
 With image based installation you may have as many images as you want (and your disk space allows). To add a new
@@ -161,7 +161,7 @@ The system currently has the following image(s) installed:
 Reboot your router to make it use newly installed image.
 
 
-\section{Delete an unused image}
+\section{Recipe: Delete an unused image}
 \problem{You want to delete a system image (for example, a previous version you do not want 
 to use after upgrade anymore).}
 \solution 
@@ -176,7 +176,7 @@ Deleting the "VC6.1-2010.08.20" image...
 Done
 \end{verbatim}
 
-\section{Change boot image}
+\section{Recipe: Change boot image}
 \problem{You want to change default boot image (e.g. to compare newer and older versions).}
 \solution
 To change default boot image, use command ``\command{set system image default-boot <name>}''.

@@ -1,9 +1,9 @@
 \chapter{Configuration Basics}
-Command Line Interface (CLI) is the preferred way to manage Vyatta. Its concepts are inspired by Juniper Networks
+Command Line Interface (CLI) is the preferable way to manage Vyatta. Its concepts are inspired by Juniper Networks
 JunOS CLI, but commands are not the same.
 
-Vyatta configuration is hierarchical, therefore commands to manage it are multiword, starting with operation name 
-(e.g. set or delete) and ending with configuration path, like ``\command{set interfaces ethernet eth0 disable}''.
+Vyatta configuration commands start with operation name (e.g. set or delete) and continue with configuration path,
+like ``\command{set interfaces ethernet eth0 disable}''.
 
 \begin{figure}[hc]
  \begin{center}
@@ -14,15 +14,15 @@ Vyatta configuration is hierarchical, therefore commands to manage it are multiw
 
 
 There are two CLI modes: \term{operational mode} and \term{configuration mode}. Operational mode is what you enter right after
-you logged in. It is intended for system maintenance operations, like upgrade, reboot or shutdown. You also may view
+you logged in. It is meant for system maintenance operations, like upgrade, reboot or shutdown. You also may view
 many parameters and services status from it, like DHCP leases or active VPN sessions. But you can not change system
 configuration from this mode, it can be done from configuration mode only.
 
 \section{Vyatta Configuration Flow}
-There are three stages in Vyatta configuration life cycly.
+There are three stages in Vyatta configuration life cycle.
 \begin{enumerate}
- \item Working (active) configuration --- this is configuration made by user from running configuration.
- \item Running configuration -- this is configuration actually used by Vyatta.
+ \item Working (active) configuration --- this configuration is made by user from running configuration.
+ \item Running configuration -- this configuration is actually used by Vyatta.
  \item Saved configuration -- a running configuration saved to a file.
 \end{enumerate}
 The following figure illustrates it:
@@ -33,15 +33,15 @@ The following figure illustrates it:
   \end{center}
 \end{figure}
 
-When you are entering configuration mode (see below), running configuration is copied to your working
-configuration. After you activated your changes, they are applied to running configuration. And if your
-saving configuration to file, running configuration is saved.
+When you enter configuration mode (see below), running configuration is copied to your working
+configuration. After you activate your changes, they are applied to running configuration. And then if you
+execute ``\command{save}'' command, your configuration will be saved to a file.
 
 \section{Recipe: Enter and Exit Configuration Mode}
 \problem{You want to make changes in configuration.}
 \solution
 Before making changes to configuration, you should enter configuration mode. To enter configuration mode, 
-you should issue ``\command{configure}'' command. Configuration mode command prompt is
+you should use ``\command{configure}'' command. Configuration mode command prompt is
 different and ends with ``\console{\#}''. Like ``\console{vyatta@vyatta\#}''. To get back from configuration
 mode to operational, use ``\command{exit}'' command.
 \begin{verbatim}
@@ -53,8 +53,8 @@ vyatta@vyatta:~$
 \end{verbatim}
 
 Command set is different in operational and configuration mode, and operational commands can not be executed
-``as is'' from configuration mode (and vice versa). However, there is a way not to switch between modes just to
-execute an operational command.
+``as is'' from configuration mode (and vice versa). However, there is a way which allows not to switch between modes 
+if you need to execute an operational command.
 
 \section{Recipe: Execute an operational command from configuration mode}
 \problem{You are in configuration mode, but want to run an operational command.}
@@ -125,7 +125,7 @@ From the example above we can see that strings about source are to be deleted.
 \section{Recipe: Apply Configuration Changes}
 \problem{You have made configuration changes and want to activate them.}
 \solution
-Configuration changes are not applied right after you issue commands. To apply them, you should issue 
+Configuration changes will not be applied right after you issue commands. To apply them, you should issue 
 ``\command{commit}'' command. This allows you to check carefully whether all changes you made are correct, and
 safely make bulk changes that would require respect to command order if changes were applied immediately
 (for instance, when creating a new BGP neighbor you can be sure route-map is applied before session is initiated).
@@ -139,12 +139,15 @@ vyatta@vyatta# show system host-name
 [edit]
 \end{verbatim}
 
+You also may add a comment about what has changed in your commit by using command 
+``\command{commit comment "<comment text>"}''.
 
 If you changed your mind about configuration changes you have made, you can discard them with command 
 ``\command{discard}''.
 
+
 \discussion
-Note that even if all of your commands to change configuration worked propely, your commit may fail. Like this:
+Note that even if all of your commands of configuration changing work propely, your commit may fail. Like this:
 \begin{verbatim}
 vyatta@vyatta# set service nat rule 10 type destination 
 [edit]
@@ -152,8 +155,8 @@ vyatta@vyatta# commit
 NAT configuration error: inbound-interface not specified
 Commit failed
 \end{verbatim}
-It happens because when you are issuing commands, only separate commands syntax check is done (e.g. checking 
-whether an address is a correct IP address). When commiting changes, semantics are also checked, and if your
+It happens because only separate commands syntax are checked when executing commands (e.g. checking 
+whether an address is a correct IP address). When commiting changes, semantics is also checked, and if your
 changes do not pass it (like in example above, a destination NAT rule must have an inbound interface), you must
 fix them to make them commit successfully.
 
@@ -168,9 +171,9 @@ command argument, like ``\command{save config-experimental}''.
 ``\command{save scp://user:password@example.net/archive/config-2010.11.22.conf}''
 
 \discussion
-Configuration changes are kept only in running configuration until you saved them to file. Default configuration
-file which is read at boot time is \console{/opt/vyatta/etc/config/config.boot}. It is created by 
-``\command{save}'' command when it is ran with no adrgument.
+Configuration changes are kept only in running configuration until you save them to file. Default configuration
+file which is read while booting  is \console{/opt/vyatta/etc/config/config.boot}. It is created by 
+``\command{save}'' command when it is ran with no argument.
 
 If you give only a file name to that command, file will be saved also to \console{/opt/vyatta/etc/config} 
 directory.
@@ -184,7 +187,7 @@ Use command ``\command{load <file>}'' to load a configuration file.
 \problem{For some reason you want to execute a UNIX command from Vyatta CLI.}
 \solution
 Note that Vyatta provides full UNIX environment, and you can execute ordinary UNIX commands from CLI by just typing
-them. The only thing is: there is no completion for them, completion works for Vyatta commands only. 
+them. But there is no completion for them, completion works for Vyatta commands only. 
 \console{\$PATH} variable also does not contain directoried like \console{/sbin} by default.
 
 However, when working as an administrative user, you may use a simple workaround by executing command with
@@ -200,3 +203,21 @@ drwxr-xr-x 1 root   root  4096 Nov 21 08:06 ..
 -rw-r--r-- 1 vyatta users  675 Apr 10  2010 .profile
 drwxr-x--- 1 vyatta users 4096 Nov 19 01:56 .ssh
 \end{verbatim}
+
+\section{Recipe: Get Help on Commands}
+Vyatta has a built-in help system with brief hints on available commands. Use ``?'' key to get help.
+
+If you type ``?'' after a part of command, you will get list of commands starting with that part.
+\begin{verbatim}
+vyatta@vyatta# set s<?>
+service  system   
+\end{verbatim}
+If you type it after a command, you will get list of subcommands of command you typed.
+\begin{verbatim}
+vyatta@vyatta# set vpn <?>
+ipsec     l2tp      pptp      rsa-keys  
+\end{verbatim}
+
+\section{Recipe: Use Command Completion}
+If you press Tab key after you type a command or its part, CLI will complete your command if its unambiguous or
+print a list of possible completions.

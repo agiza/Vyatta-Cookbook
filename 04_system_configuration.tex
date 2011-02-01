@@ -1,1 +1,61 @@
 \chapter{System Configuration}
+Vyatta has various system options controlling user rights, authentication properties, date and time and so on.
+
+\section{Recipe: Configure Host Name}
+Probably the first thing you want to do with a new router is to configure its host name to distinguish it from
+other hosts in your network. It can be done with command ``\command{set system hostname }''.
+\begin{verbatim}
+vyatta@vyatta# set system host-name router 
+[edit]
+vyatta@vyatta# commit
+\end{verbatim}
+Note that you should re-login to see your changes applied. Newly connected users will see these changes right after
+you issue this command and commit changes.
+
+Host name should start with a letter and contain only letters, digits and ``-'' sign.
+
+\section{Recipe: Configure Time Zone}
+To see log messages with proper time stamps you may want to configure the time zone. Use 
+``\command{set system time-zone <zone>/<city>}'' for it. For instance, ``US/Pacific''.
+
+Use command completion to find your time zone.
+
+Summer time is automatically set for time zones that use it, there is no need to configure it
+manually.
+
+\section{Recipe: Configure NTP Server}
+By default some NTP servers are already configured to synchronize time with. You may add your own by using command
+``\command{set system ntp server <address>}''.
+
+Note that Vyatta also is implicitly functioning as NTP server, so you may configure your clients
+to synchronize time with it. If it is not desired behaviour, NTP requests can be blocked with
+firewall rules.
+
+\section{Recipe: Configure DNS Server}
+To be able to resolve domain names on your router you need to configure a DNS server to use. It can be done
+with command ``\command{set system name-server <IP address>}''.
+
+\section{Recipe: Disable IPv4 or IPv6 routing}
+You may want to administratively disable routing of IPv4 or IPv6 packets on your system. It can be done
+with commands ``\command{set system ip disable-forwarding}'' and ``\command{set system ipv6 disable-forwarding}''.
+
+By default both are enabled.
+
+\section{Recipe: Add New User}
+\problem{You want to create several users in addition to default ``vyatta'' user.}
+\solution
+Use command ``\command{set system login user <name>}''. Then you should set password with command 
+``\command{set system login user <name> authentication plaintext-password <password>}'' and may set
+full name with ``\command{set system login user <name> full-name "<Name Surname>"}''.
+
+Do not be confused by option name ``plaintext-password''. It just indicates you enter unencrypted password
+that will be encrypted on commit. 
+
+If you migrate users from another already configured system and have password hashes, you may
+enter them by using option ``encrypted-password'' instead of ``plaintext-password''.
+
+\section{Recipe: Restrict Some User to Operational Commands Only}
+If you want to give some to user only privelege of using operational mode, but not of modifying configuration,
+you may do it by setting option ``\command{set system login user <name> level operator}''.
+
+If you want to raise privileges of such user in the future, set that option to ``admin'' value.
